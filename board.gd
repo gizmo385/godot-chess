@@ -186,14 +186,9 @@ func is_movement_obstructed(
 			if obstructive_point == from_position:
 				# We can't block ourselves
 				continue
-			elif x_change == 0 and obstructive_point.x != from_position.x:
-				# If the obstructing piece isn't in the same file as we are, ignore it
-				continue
-			elif y_change == 0 and obstructive_point.y != from_position.y:
-				# If the obstructing piece isn't in the same file as we are, ignore it
-				continue
 			elif direction_to_obstruction == direction_to_destination and distance_to_obstruction < distance_to_destination:
-				print("Move of %s to %s blocked by %s" % [self.get_square_at(from_position), to_position, self.get_square_at(obstructive_point)])
+				# If we would move in the same direction towards the obstruction as we would to 
+				# get to our destination and the obstruction is closer, we are blocked.
 				return true
 	else:
 		# Build the line equation y = mx + b between our origin and destination point
