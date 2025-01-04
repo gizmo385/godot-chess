@@ -1,0 +1,12 @@
+[gd_scene load_steps=3 format=3 uid="uid://cooipkr16ssvp"]
+
+[ext_resource type="PackedScene" uid="uid://btm3dd4kmi6jf" path="res://board_square.tscn" id="1_22umr"]
+[ext_resource type="Script" path="res://board.gd" id="1_vqqrx"]
+
+[node name="Board" type="Node2D"]
+script = ExtResource("1_vqqrx")
+metadata/_edit_group_ = true
+
+[node name="BoardSquare" parent="." instance=ExtResource("1_22umr")]
+
+[connection signal="square_selected" from="BoardSquare" to="." method="_on_square_selected"]

@@ -1,0 +1,10 @@
+[gd_scene load_steps=3 format=3 uid="uid://btm3dd4kmi6jf"]
+
+[ext_resource type="Script" path="res://board_square.gd" id="1_3erml"]
+[ext_resource type="PackedScene" uid="uid://sjywks2n85v4" path="res://piece.tscn" id="2_jp7xh"]
+
+[node name="BoardSquare" type="ColorRect"]
+script = ExtResource("1_3erml")
+move_candidate_color = Color(0.329412, 0.784314, 0.501961, 1)
+
+[node name="Piece" parent="." instance=ExtResource("2_jp7xh")]

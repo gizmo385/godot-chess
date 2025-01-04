@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://ijertc2i04iw"]
+
+[ext_resource type="Script" path="res://piece_sprite.gd" id="1_ys3sd"]
+
+[node name="PieceSprite" type="Sprite2D"]
+position = Vector2(50, 50)
+script = ExtResource("1_ys3sd")

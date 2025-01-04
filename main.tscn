@@ -1,0 +1,19 @@
+[gd_scene load_steps=3 format=3 uid="uid://b2wah2y2key0i"]
+
+[ext_resource type="Script" path="res://main.gd" id="1_1nujs"]
+[ext_resource type="PackedScene" uid="uid://cooipkr16ssvp" path="res://board.tscn" id="3_gc4cj"]
+
+[node name="Main" type="Node"]
+script = ExtResource("1_1nujs")
+squareSize = 50
+
+[node name="Background" type="ColorRect" parent="."]
+visible = false
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0.996078, 0.372549, 1)
+
+[node name="Board" parent="." instance=ExtResource("3_gc4cj")]
