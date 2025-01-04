@@ -19,16 +19,16 @@ func _ready() -> void:
 	self.add_child(sprite)
 	
 func _to_string():
-	var color_string = "White" if self.is_white() else "Black"
-	var type_string = ""
+	var piece_color_string = "White" if self.is_white() else "Black"
+	var piece_type_string = ""
 	match self.pieceType:
-		PieceSprite.PieceType.PAWN: type_string = "Pawn"
-		PieceSprite.PieceType.ROOK: type_string = "Rook"
-		PieceSprite.PieceType.KNIGHT: type_string = "Knight"
-		PieceSprite.PieceType.BISHOP: type_string = "Bishop"
-		PieceSprite.PieceType.QUEEN: type_string = "Queen"
-		PieceSprite.PieceType.KING: type_string = "King"
-	return "%s %s" % [color_string, type_string]
+		PieceSprite.PieceType.PAWN: piece_type_string = "Pawn"
+		PieceSprite.PieceType.ROOK: piece_type_string = "Rook"
+		PieceSprite.PieceType.KNIGHT: piece_type_string = "Knight"
+		PieceSprite.PieceType.BISHOP: piece_type_string = "Bishop"
+		PieceSprite.PieceType.QUEEN: piece_type_string = "Queen"
+		PieceSprite.PieceType.KING: piece_type_string = "King"
+	return "%s %s" % [piece_color_string, piece_type_string]
 	
 func is_white() -> bool:
 	return self.pieceColor == PieceSprite.PieceColor.WHITE

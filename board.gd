@@ -155,16 +155,7 @@ func _on_square_selected(at_position: Vector2) -> void:
 	elif move_is_valid:
 		# If they've previously selected a square with a piece on it, move the piece
 		self.clear_move_candidates()
-		var currently_selected_piece = self.get_piece_at(self.currently_selected_square)
-		print(
-			self.is_movement_obstructed(
-				self.currently_selected_square, 
-				at_position, 
-				self.blackPieceSquares if currently_selected_piece.is_black() else self.whitePieceSquares
-			)
-		)
 		self.move_piece(self.currently_selected_square, at_position)	
-		#self.clear_selection()
 	else:
 		self.clear_selection()
 		self.clear_move_candidates()
@@ -181,20 +172,42 @@ func is_movement_obstructed(
 		from_position: Vector2, to_position: Vector2, obstructions: Dictionary,
 ) -> bool:
 	var x_change = (to_position.x - from_position.x)
-	if x_change == 0:
-		pass
+	var y_change = (to_position.y - from_position.y)
+	var distance_to_destination = from_position.distance_to(to_position)
+	var direction_to_destination = from_position.direction_to(to_position)
+	
+	if x_change == 0 or y_change == 0:
+		# If one of the components isn't changing, then we want to compare the distances between the
+		# potential obstruction and the destination. If the obstruction is closer, then we are
+		# blocked and cannot proceed.
+		for obstructive_point in obstructions.keys():
+			var distance_to_obstruction = from_position.distance_to(obstructive_point)
+			var direction_to_obstruction = from_position.direction_to(obstructive_point)
+			if obstructive_point == from_position:
+				# We can't block ourselves
+				continue
+			elif x_change == 0 and obstructive_point.x != from_position.x:
+				# If the obstructing piece isn't in the same file as we are, ignore it
+				continue
+			elif y_change == 0 and obstructive_point.y != from_position.y:
+				# If the obstructing piece isn't in the same file as we are, ignore it
+				continue
+			elif direction_to_obstruction == direction_to_destination and distance_to_obstruction < distance_to_destination:
+				print("Move of %s to %s blocked by %s" % [self.get_square_at(from_position), to_position, self.get_square_at(obstructive_point)])
+				return true
 	else:
 		# Build the line equation y = mx + b between our origin and destination point
-		var line_slope = (to_position.y - from_position.y) / x_change
+		var line_slope = y_change / x_change
 		var line_offset = from_position.y - (line_slope * from_position.x)
 		for obstructive_point in obstructions.keys():
 			if obstructive_point == from_position:
 				# We can't block ourselves
 				continue
 			elif obstructive_point.y == (line_slope * obstructive_point.x) + line_offset:
-				# If the obstruction point satisfies this equation, then it's on the path between 
-				# our current location and our destination location and we can't move there.
-				return true
+				# If the obstruction point satisfies this equation and is closer to us than our
+				# destination, then it's in the way and we can't move there.
+				var distance_to_obstruction = from_position.distance_to(obstructive_point)
+				return distance_to_obstruction < distance_to_destination
 	return false
 
 func get_valid_moves_from_position(at_position: Vector2) -> Array[Vector2]:
@@ -204,7 +217,6 @@ func get_valid_moves_from_position(at_position: Vector2) -> Array[Vector2]:
 	if not piece:
 		return move_candidates
 	
-	# TODO: All of these need to determine if there is another piece in the way
 	var can_be_obstructed = true
 	match piece.pieceType:
 		PieceSprite.PieceType.PAWN:
@@ -218,7 +230,7 @@ func get_valid_moves_from_position(at_position: Vector2) -> Array[Vector2]:
 			if at_position.y == pawn_starting_rank:
 				move_candidates.append(at_position + Vector2(0, 2 * rank_offset))
 				
-			# 3. Diagonally one square forward to attack an enemy piece
+			# 3. Diagonally one square forward to attack an enemy piece TODO Fix this
 			for diagonal_offset in [Vector2(1, 1 * rank_offset), Vector2(-1, rank_offset)]:
 				var diagonal_candidate = at_position + diagonal_offset
 				var diagonal_square = self.get_square_at(diagonal_candidate)
@@ -232,7 +244,7 @@ func get_valid_moves_from_position(at_position: Vector2) -> Array[Vector2]:
 				move_candidates.append(at_position + offset)
 		PieceSprite.PieceType.KNIGHT:
 			# Can move in L's and ignores obstructions
-			can_be_obstructed = false 
+			can_be_obstructed = false
 			for offset in KNIGHT_MOVEMENTS:
 				move_candidates.append(at_position + offset)
 		PieceSprite.PieceType.BISHOP:
@@ -256,7 +268,7 @@ func get_valid_moves_from_position(at_position: Vector2) -> Array[Vector2]:
 	# Prune things that aren't actually valid
 	var final_move_candidates: Array[Vector2] = []
 	var potential_obstructions = self.whitePieceSquares if piece.is_white() else blackPieceSquares
-	print(potential_obstructions)
+
 	for candidate in move_candidates:
 		# Clamp to the board edges
 		if not self.is_position_on_board(candidate):
